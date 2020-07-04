@@ -3,6 +3,8 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+const API_KEY = process.env.API_KEY;
+
 interface BikeStationInfo {
     rackTotCnt: number, // 거치소 개수
     stationName: string, // 대여소 이름
@@ -22,7 +24,6 @@ interface CurrentInfo {
     row: BikeStationInfo[];
 }
 
-const API_KEY = process.env.API_KEY;
 function requestCurrentInfo(startIdx: number, endIdx: number) {
     return new Promise((resolve, reject) => {
         request.get(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/bikeList/${startIdx}/${endIdx}/`, (err: Error, res: request.Response) => {
@@ -39,10 +40,11 @@ async function main() {
     const bikeStations: BikeStationInfo[] = currentInfo.row;
 
     if(resultCode != 'INFO-000') {
-        console.log(resultCode, nInfo);
+        console.log("There was some error to get current info from Open API");
     }
-
-    console.log(bikeStations);
+    
+    console.log(resultCode, nInfo);
+    
 }
 
 main();
