@@ -2,11 +2,14 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import * as request from  'request';
+
+import moment from 'moment-timezone';
+
 import * as cron from 'node-cron';
 import pool from './modules/db';
 import { PoolConnection } from 'mysql2/promise';
 
-
+moment.tz.setDefault("Asia/Seoul");
 const API_KEY = process.env.API_KEY;
 
 interface BikeStationInfo {
@@ -81,29 +84,63 @@ async function loadAllCombinedInfoTo(bikeStations: BikeStationInfo[]) {
 
 async function createTableIfNotExists(conn: PoolConnection, stationId: string) {
     const sql = "CREATE TABLE IF NOT EXISTS ?? (" + 
+    " idx INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+    " datetime VARCHAR(25) COLLATE 'utf8_bin'," +
     " stationName VARCHAR(200) COLLATE 'utf8_bin'," +
     " parkingBikeTotCnt INT(11)," +
     " stationLatitude INT(11)," +
-    " stationLongitude INT(11)," +
-    " stationId INT(11)" +
+    " stationLongitude INT(11)" +
     ") COLLATE='utf8_bin' ENGINE=InnoDB";
 
     const params = [stationId];
-    console.log(params);
     await conn.query(sql, params);
 }
 
-async function main() {
+let count = 0;
+async function saveBikeStationInfo(conn: PoolConnection, bikeStation: BikeStationInfo, datetime: string) {
+    
+    const sql = "INSERT INTO ?? (datetime, stationName, parkingBikeTotCnt, stationLatitude, stationLongitude) VALUES (?, ?, ?, ?, ?)";
+    const params = [
+        bikeStation.stationId, 
+        datetime,
+        bikeStation.stationName,
+        bikeStation.parkingBikeTotCnt,
+        bikeStation.stationLatitude,
+        bikeStation.stationLongitude,
+    ];
+
+    await conn.query(sql, params);
+    count++;
+}
+
+async function startCollectingProcess() {
+    
     let bikeStations: BikeStationInfo[] = [];
     await loadAllCombinedInfoTo(bikeStations);
+
+    const now = moment().format('YYYY-MM-DD HH:mm:ss');
+    console.log(now)
 
     for await (let bikeStation of bikeStations) {
         const conn = await pool.getConnection();
         // 새로운 대여소가 생길 것을 대비
         await createTableIfNotExists(conn, bikeStation.stationId);
-
+        await saveBikeStationInfo(conn, bikeStation, now);
         conn.release();
     }
+    console.log(bikeStations.length == count);
+    console.log('done');
+}
+
+function setScheduler(func: Function, min: number) {
+    cron.schedule(`*/${min} * * * *`, () => {
+        func();
+    });
+}
+
+async function main() {
+    const PERIOD_IN_MIN = 5;
+    setScheduler(startCollectingProcess, PERIOD_IN_MIN);
 }
 
 main();
