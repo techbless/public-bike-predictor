@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/moment": "^2.13.0",
+    "@types/moment-timezone": "^0.5.13",
     "@types/mysql": "^2.15.14",
     "@types/mysql2": "github:types/mysql2",
     "@types/node-cron": "^2.0.3",
@@ -22,6 +24,8 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
+    "moment": "^2.27.0",
+    "moment-timezone": "^0.5.31",
     "mysql2": "^2.1.0",
     "node-cron": "^2.0.3",
     "request": "^2.88.2"
