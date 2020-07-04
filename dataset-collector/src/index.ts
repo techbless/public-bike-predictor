@@ -1,9 +1,11 @@
-import * as request from  'request';
 import * as dotenv from 'dotenv';
-import * as cron from 'node-cron';
-import * as db from './modules/db';
-
 dotenv.config();
+
+import * as request from  'request';
+import * as cron from 'node-cron';
+import pool from './modules/db';
+import { PoolConnection } from 'mysql2/promise';
+
 
 const API_KEY = process.env.API_KEY;
 
@@ -77,30 +79,31 @@ async function loadAllCombinedInfoTo(bikeStations: BikeStationInfo[]) {
     }
 }
 
-async function insertToDB(bikeStation: BikeStationInfo) {
-    const conn = await db.getConnection();
-}
+async function createTableIfNotExists(conn: PoolConnection, stationId: string) {
+    const sql = "CREATE TABLE IF NOT EXISTS ?? (" + 
+    " stationName VARCHAR(200) COLLATE 'utf8_bin'," +
+    " parkingBikeTotCnt INT(11)," +
+    " stationLatitude INT(11)," +
+    " stationLongitude INT(11)," +
+    " stationId INT(11)" +
+    ") COLLATE='utf8_bin' ENGINE=InnoDB";
 
+    const params = [stationId];
+    console.log(params);
+    await conn.query(sql, params);
+}
 
 async function main() {
     let bikeStations: BikeStationInfo[] = [];
     await loadAllCombinedInfoTo(bikeStations);
 
-    // for await (let bikeStation of bikeStations) {
-    //     const conn = await db.getConnection();
-        
-    //     const sql = "CREATE TABLE IF NOT EXISTS ?? (" + 
-    //     " stationName VARCHAR(200) COLLATE 'utf8_bin'," +
-    //     " parkingBikeTotCnt INT(11)," +
-    //     " stationLatitude VARCHAR(50) COLLATE 'utf8_bin'" +
-    //     " stationLongitude VARCHAR(50) COLLATE 'utf8_bin'" +
-    //     " stationId INT(11)"
-    //     ") COLLATE='utf8_bin' ENGINE=InnoDB";
+    for await (let bikeStation of bikeStations) {
+        const conn = await pool.getConnection();
+        // 새로운 대여소가 생길 것을 대비
+        await createTableIfNotExists(conn, bikeStation.stationId);
 
-    //     const params = [bikeStation.stationId]
-    // }
-    
-    console.log(typeof bikeStations[1000].shared);
+        conn.release();
+    }
 }
 
 main();
