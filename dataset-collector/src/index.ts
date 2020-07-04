@@ -27,24 +27,49 @@ interface CurrentInfo {
 function requestCurrentInfo(startIdx: number, endIdx: number) {
     return new Promise((resolve, reject) => {
         request.get(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/bikeList/${startIdx}/${endIdx}/`, (err: Error, res: request.Response) => {
+            if(err) {
+                throw new Error("Failed to get stations info.")
+            }
             resolve(res.body);
         })
     });
 }
 
-async function main() {
-    const currentInfoInJson: string = await requestCurrentInfo(1, 10) as string;
+async function parseToBikeStatinInfo(currentInfoInJson: string) : Promise<BikeStationInfo[]> {
     const currentInfo: CurrentInfo = JSON.parse(currentInfoInJson).rentBikeStatus;
     const resultCode = currentInfo.RESULT.CODE;
     const nInfo = currentInfo.list_total_count;
     const bikeStations: BikeStationInfo[] = currentInfo.row;
 
-    if(resultCode != 'INFO-000') {
-        console.log("There was some error to get current info from Open API");
+    if(resultCode != 'INFO-000' && nInfo >= 1) {
+        throw new Error("Failed to parse json.");
     }
+
+    return bikeStations;
+}
+
+async function loadAllCombinedInfoTo(bikeStations: BikeStationInfo[]) {
+    for(let i = 1; i <= 2001; i+=1000) {
+        const startIdx = i;
+        const endIdx = i + 999;
+
+        const currentInfoInJson: string = await requestCurrentInfo(startIdx, endIdx) as string;
+        const temp: BikeStationInfo[] = await parseToBikeStatinInfo(currentInfoInJson);
+
+        temp.map((station: BikeStationInfo) => {
+            bikeStations.push(station);
+        });
+    }
+}
+
+async function main() {
     
-    console.log(resultCode, nInfo);
+    // 1 ~ 1000, 1001 ~ 2000, 2001 ~ 3000 나눠서 요청 보내야함.
+    let bikeStations: BikeStationInfo[] = [];
+    await loadAllCombinedInfoTo(bikeStations);
     
+    console.log(bikeStations.length);
+
 }
 
 main();
