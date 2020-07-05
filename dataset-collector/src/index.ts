@@ -2,9 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import * as request from  'request';
-
 import moment from 'moment-timezone';
-
 import * as cron from 'node-cron';
 import pool from './modules/db';
 import { PoolConnection } from 'mysql2/promise';
@@ -45,7 +43,6 @@ function requestCurrentInfo(startIdx: number, endIdx: number) : Promise<string> 
 async function parseToBikeStatinInfo(currentInfoInJson: string) : Promise<BikeStationInfo[]> {
     // after JSON.parse, actually not typecasted correctly.
     const currentInfo: CurrentInfo = JSON.parse(currentInfoInJson).rentBikeStatus as CurrentInfo;
-
     const resultCode = currentInfo.RESULT.CODE;
 
     let bikeStations: BikeStationInfo[] = currentInfo.row.map((info) => {
@@ -67,11 +64,21 @@ async function parseToBikeStatinInfo(currentInfoInJson: string) : Promise<BikeSt
     return bikeStations;
 }
 
+async function removeDuplication(bikeStations: BikeStationInfo[]) {
+    const filtered = bikeStations.filter((bikeStation, index) => {
+        return index === bikeStations.findIndex((obj) => {
+            return obj.stationId === bikeStation.stationId;
+        })
+    })
+
+    return filtered;
+}
+
 async function loadAllCombinedInfo() {
     let bikeStations: BikeStationInfo[] = [];
 
     // 1 ~ 1000, 1001 ~ 2000, 2001 ~ 3000 나눠서 요청 보내야함.
-    for(let i = 1; i <= 2001; i+=1000) {
+    for(let i = 1; i <= 1001; i+=1000) {
         const startIdx = i;
         const endIdx = i + 999;
 
@@ -80,7 +87,7 @@ async function loadAllCombinedInfo() {
         bikeStations = bikeStations.concat(newData);
     }
 
-    return bikeStations;
+    return removeDuplication(bikeStations);
 }
 
 async function createTableIfNotExists(conn: PoolConnection, stationId: string) {
@@ -113,19 +120,18 @@ async function saveBikeStationInfo(conn: PoolConnection, bikeStation: BikeStatio
 
 async function startCollectingProcess() {
     let bikeStations: BikeStationInfo[] = await loadAllCombinedInfo();
-
-    const now = moment().format('YYYY-MM-DD HH:mm:ss');
+    const now = moment().format('YYYY-MM-DD HH:mm');
     console.log(now, "Collecting Start : ", bikeStations.length);
 
-    for await (let bikeStation of bikeStations) {
+    console.time("Load&Save");
+    for (let bikeStation of bikeStations) {
         const conn = await pool.getConnection();
         // 새로운 대여소가 생길 것을 대비
         await createTableIfNotExists(conn, bikeStation.stationId);
         await saveBikeStationInfo(conn, bikeStation, now);
         conn.release();
     }
-
-    console.log('Done');
+    console.timeEnd("Load&Save");
 }
 
 function setScheduler(func: Function, min: number) {
@@ -137,6 +143,7 @@ function setScheduler(func: Function, min: number) {
 async function main() {
     const PERIOD_IN_MIN = 5;
     setScheduler(startCollectingProcess, PERIOD_IN_MIN);
+    //startCollectingProcess();
 }
 
 main();
