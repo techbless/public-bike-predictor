@@ -6,28 +6,10 @@ import moment from 'moment-timezone';
 import * as cron from 'node-cron';
 import pool from './modules/db';
 import { PoolConnection } from 'mysql2/promise';
+import { BikeStationInfo, CurrentInfo } from './interfaces';
 
 moment.tz.setDefault("Asia/Seoul");
 const API_KEY = process.env.API_KEY;
-
-interface BikeStationInfo {
-    rackTotCnt: number, // 거치소 개수
-    stationName: string, // 대여소 이름
-    parkingBikeTotCnt: number, // 자전거 주차 총건수
-    shared: number, // 거치율
-    stationLatitude: number, // 위도
-    stationLongitude: number, // 경도
-    stationId: string // 대여소 ID
-}
-
-interface CurrentInfo {
-    list_total_count: number;
-    RESULT: {
-        CODE: string;
-        MESSAGE: string;
-    };
-    row: BikeStationInfo[];
-}
 
 function requestCurrentInfo(startIdx: number, endIdx: number) : Promise<string> {
     return new Promise((resolve, reject) => {
