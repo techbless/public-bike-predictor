@@ -67,19 +67,20 @@ async function parseToBikeStatinInfo(currentInfoInJson: string) : Promise<BikeSt
     return bikeStations;
 }
 
-async function loadAllCombinedInfoTo(bikeStations: BikeStationInfo[]) {
+async function loadAllCombinedInfo() {
+    let bikeStations: BikeStationInfo[] = [];
+
     // 1 ~ 1000, 1001 ~ 2000, 2001 ~ 3000 나눠서 요청 보내야함.
     for(let i = 1; i <= 2001; i+=1000) {
         const startIdx = i;
         const endIdx = i + 999;
 
         const currentInfoInJson: string = await requestCurrentInfo(startIdx, endIdx);
-        const temp: BikeStationInfo[] = await parseToBikeStatinInfo(currentInfoInJson);
-
-        temp.map((station: BikeStationInfo) => {
-            bikeStations.push(station);
-        });
+        const newData: BikeStationInfo[] = await parseToBikeStatinInfo(currentInfoInJson);
+        bikeStations = bikeStations.concat(newData);
     }
+
+    return bikeStations;
 }
 
 async function createTableIfNotExists(conn: PoolConnection, stationId: string) {
@@ -96,9 +97,7 @@ async function createTableIfNotExists(conn: PoolConnection, stationId: string) {
     await conn.query(sql, params);
 }
 
-let count = 0;
 async function saveBikeStationInfo(conn: PoolConnection, bikeStation: BikeStationInfo, datetime: string) {
-    
     const sql = "INSERT INTO ?? (datetime, stationName, parkingBikeTotCnt, stationLatitude, stationLongitude) VALUES (?, ?, ?, ?, ?)";
     const params = [
         bikeStation.stationId, 
@@ -110,16 +109,13 @@ async function saveBikeStationInfo(conn: PoolConnection, bikeStation: BikeStatio
     ];
 
     await conn.query(sql, params);
-    count++;
 }
 
 async function startCollectingProcess() {
-    
-    let bikeStations: BikeStationInfo[] = [];
-    await loadAllCombinedInfoTo(bikeStations);
+    let bikeStations: BikeStationInfo[] = await loadAllCombinedInfo();
 
     const now = moment().format('YYYY-MM-DD HH:mm:ss');
-    console.log(now)
+    console.log(now, "Collecting Start : ", bikeStations.length);
 
     for await (let bikeStation of bikeStations) {
         const conn = await pool.getConnection();
@@ -128,8 +124,8 @@ async function startCollectingProcess() {
         await saveBikeStationInfo(conn, bikeStation, now);
         conn.release();
     }
-    console.log(bikeStations.length == count);
-    console.log('done');
+
+    console.log('Done');
 }
 
 function setScheduler(func: Function, min: number) {
