@@ -17,33 +17,38 @@ function requestCurrentInfo(startIdx: number, endIdx: number) : Promise<string> 
             if(err) {
                 reject(err);
             }
+
             resolve(res.body);
         })
     });
 }
 
 async function parseToBikeStatinInfo(currentInfoInJson: string) : Promise<BikeStationInfo[]> {
-    // after JSON.parse, actually not typecasted correctly.
-    const currentInfo: CurrentInfo = JSON.parse(currentInfoInJson).rentBikeStatus as CurrentInfo;
-    const resultCode = currentInfo.RESULT.CODE;
-
-    let bikeStations: BikeStationInfo[] = currentInfo.row.map((info) => {
-        return {
-            rackTotCnt: +info.rackTotCnt, // 거치소 개수
-            stationName: info.stationName, // 대여소 이름
-            parkingBikeTotCnt: +info.parkingBikeTotCnt, // 자전거 주차 총건수
-            shared: +info.shared, // 거치율
-            stationLatitude: +info.stationLatitude, // 위도
-            stationLongitude: +info.stationLongitude, // 경도
-            stationId: info.stationId // 대여소 ID
+    try {
+        // after JSON.parse, actually not typecasted correctly.
+        const currentInfo: CurrentInfo = JSON.parse(currentInfoInJson).rentBikeStatus as CurrentInfo;
+        const resultCode = currentInfo.RESULT.CODE;
+        
+        if(resultCode != 'INFO-000') {
+            throw new Error("Result Code is not 'INFO-000'");
         }
-    })
 
-    if(resultCode != 'INFO-000') {
-        throw new Error("Failed to parse json.");
+        const bikeStations: BikeStationInfo[] = currentInfo.row.map((info) => {
+            return {
+                rackTotCnt: +info.rackTotCnt, // 거치소 개수
+                stationName: info.stationName, // 대여소 이름
+                parkingBikeTotCnt: +info.parkingBikeTotCnt, // 자전거 주차 총건수
+                shared: +info.shared, // 거치율
+                stationLatitude: +info.stationLatitude, // 위도
+                stationLongitude: +info.stationLongitude, // 경도
+                stationId: info.stationId // 대여소 ID
+            }
+        });
+
+        return bikeStations;
+    } catch(err) {
+        throw new Error("Failed to parse API result(json).");
     }
-
-    return bikeStations;
 }
 
 async function removeDuplication(bikeStations: BikeStationInfo[]) {
@@ -125,13 +130,18 @@ async function startCollectingProcess() {
 }
 
 function setScheduler(func: Function, min: number) {
-    cron.schedule(`*/${min} * * * *`, () => {
-        func();
+    cron.schedule(`*/${min} * * * *`, async () => {
+        try {
+            await func();
+        } catch(err) {
+            console.log("Failed : ", err.message);
+        }
     });
 }
 
 async function main() {
-    const PERIOD_IN_MIN = 5;
+    console.log("Server Started!");
+    const PERIOD_IN_MIN = 1;
     setScheduler(startCollectingProcess, PERIOD_IN_MIN);
 }
 
