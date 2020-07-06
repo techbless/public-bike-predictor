@@ -13,7 +13,8 @@ const API_KEY = process.env.API_KEY;
 
 function requestCurrentInfo(startIdx: number, endIdx: number) : Promise<string> {
     return new Promise((resolve, reject) => {
-        request.get(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/bikeList/${startIdx}/${endIdx}/`, (err: Error, res: request.Response) => {
+        request.get(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/bikeList/${startIdx}/${endIdx}/`, 
+        (err: Error, res: request.Response) => {
             if(err) {
                 reject(err);
             }
@@ -141,7 +142,7 @@ function setScheduler(func: Function, min: number) {
 
 async function main() {
     console.log("Server Started!");
-    const PERIOD_IN_MIN = 1;
+    const PERIOD_IN_MIN = 5;
     setScheduler(startCollectingProcess, PERIOD_IN_MIN);
 }
 
