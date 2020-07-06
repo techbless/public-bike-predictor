@@ -102,6 +102,7 @@ async function saveBikeStationInfo(conn: PoolConnection, bikeStation: BikeStatio
 
 async function doDBTaskFor(bikeStation: BikeStationInfo, datetime: string) {
     const conn = await pool.getConnection();
+
     // 새로운 대여소가 생길 것을 대비
     await createTableIfNotExists(conn, bikeStation.stationId);
     await saveBikeStationInfo(conn, bikeStation, datetime);
@@ -111,22 +112,15 @@ async function doDBTaskFor(bikeStation: BikeStationInfo, datetime: string) {
 async function startCollectingProcess() {
     let bikeStations: BikeStationInfo[] = await loadAllCombinedInfo();
     const now = moment().format('YYYY-MM-DD HH:mm');
-    console.log(now, "Collecting Start : ", bikeStations.length);
 
+    console.log(now, "Collecting Start : ", bikeStations.length);
     console.time("Load&Save");
-    // for await (let bikeStation of bikeStations) {
-    //     const conn = await pool.getConnection();
-    //     // 새로운 대여소가 생길 것을 대비
-    //     await createTableIfNotExists(conn, bikeStation.stationId);
-    //     await saveBikeStationInfo(conn, bikeStation, now);
-    //     conn.release();
-    // }
 
     const tasks = bikeStations.map((bikeStation: BikeStationInfo) => {
         return doDBTaskFor(bikeStation, now);
     });
     await Promise.all(tasks);
-
+    
     console.timeEnd("Load&Save");
 }
 
@@ -139,7 +133,6 @@ function setScheduler(func: Function, min: number) {
 async function main() {
     const PERIOD_IN_MIN = 5;
     setScheduler(startCollectingProcess, PERIOD_IN_MIN);
-    // startCollectingProcess();
 }
 
 main();
