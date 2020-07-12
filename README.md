@@ -5,6 +5,8 @@
 ## Directories
 Directory-specific usage description 
 
-|     Directory     |         For        |
-|:-----------------:|:------------------:|
-| dataset-collector | to collect dataset |
+|     Directory     |          For         |
+|:-----------------:|:--------------------:|
+| dataset-collector | dataset collector    |
+| predictor         | bike stock predictor |
+| frontend          | frontend             |
