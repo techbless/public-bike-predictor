@@ -1,6 +1,22 @@
 .App_station_list {
     height: calc(100vh - 56px);
     overflow-y: scroll;
+    background-color: rgb(88, 88, 88);
+}
+
+.App_station_list::-webkit-scrollbar {
+    width: 10px;
+}
+.App_station_list::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+.App_station_list::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: rgb(182, 182, 182);
+}
+.App_station_list::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
 }
 
 .App_map {
@@ -12,7 +28,7 @@
     margin: 0;
 }
 
-.no-padding.col-md-8 {
+.no-padding.col-md-9 {
     padding-right: 0;
     padding-left: 0;
 }
