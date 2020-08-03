@@ -1,0 +1,12 @@
+.up {
+  background-color: rgb(150, 231, 113);
+}
+
+.down {
+  background-color: rgb(226, 93, 93);
+}
+
+.Card_card {
+  margin: auto;
+  widht: 90%;
+}
