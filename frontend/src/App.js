@@ -26,7 +26,7 @@ function App() {
       <div className="row">
 
         <div className="col-md-8 App_map no-padding ">
-          <Map />
+          <Map stations={stations} />
         </div>
 
         <div className="col-md-4 App_station_list d-none d-md-block">
