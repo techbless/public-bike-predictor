@@ -12,10 +12,10 @@ ReactDOM.render(
        <Navbar.Brand href="#home" >따르릉</Navbar.Brand>
        <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mr-auto">
+        {/* <Nav className="mr-auto">
           <Nav.Link href="#list" >리스트로 보기</Nav.Link>
           <Nav.Link href="#map">지도로 보기</Nav.Link>
-        </Nav>
+        </Nav> */}
         </Navbar.Collapse>
       </Navbar>
     <App />
