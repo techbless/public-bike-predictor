@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Card from './Card';
+import Map from './components/Map';
 import DetailModal from './DetailModal';
 import './App.css';
 
 function App() {
 
   const [stations, setStations] = useState([]);
-  const [rows, setRows] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -15,7 +15,6 @@ function App() {
       const result = await resultInJson.json();
 
       setStations(result);
-      // setRows(chunks(result, 2));
     }
     
     fetchData();
@@ -27,7 +26,7 @@ function App() {
       <div className="row">
 
         <div className="col-md-9 bg-success App_map">
-          <h1>Map will be here.</h1>
+          <Map />
         </div>
 
         <div className="col-md-3 App_station_list">

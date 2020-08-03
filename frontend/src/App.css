@@ -5,4 +5,6 @@
 
 .App_map {
     height: calc(100vh - 56px);
+    padding: 0;
+    margin: 0;
 }
