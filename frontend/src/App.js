@@ -25,12 +25,12 @@ function App() {
       <DetailModal show={false}/>
       <div className="row">
 
-        <div className="col-md-8 App_map no-padding ">
+        <div className="col-md-9 App_map no-padding ">
           <Map stations={stations} />
         </div>
 
-        <div className="col-md-4 App_station_list d-none d-md-block">
-          <div className="container mt-5 ">
+        <div className="col-md-3 App_station_list d-none d-md-block">
+          <div className="container-fluid mt-2 ">
             {
               stations.map((station) => (
                   <Card
