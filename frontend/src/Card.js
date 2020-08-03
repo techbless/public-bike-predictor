@@ -15,9 +15,9 @@ function Card(props) {
                 "down Card_card my-2 shadow-sm rounded"
             }
         >
-            <h4>{props.name}</h4>
-            <hr />
-            <h5>현재: {props.stock}, 예측: {mean(props.future)}</h5>
+            <h5 className="text-center">{props.name}</h5>
+            <hr className="my-2"/>
+            <h6 className="text-center">현재: {props.stock}, 예측 평균: {Math.round(mean(props.future) * 1000) / 1000}</h6>
         </div>
     );
     
