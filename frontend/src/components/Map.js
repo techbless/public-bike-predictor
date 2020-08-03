@@ -2,6 +2,10 @@
 import React, { useEffect } from 'react';
 import styled from "styled-components";
 
+function mean(arr) {
+  return arr.reduce((a, b) => a + b) / arr.length;
+}
+
 function Map(props) {
 
   useEffect(() => {
@@ -27,10 +31,28 @@ function Map(props) {
 
         const markers = props.stations.map((station) => {
           const markerPosition  = new kakao.maps.LatLng(+station.stationLatitude, +station.stationLongitude); 
+          
+          const UP_IMG = 'https://cdn.mapmarker.io/api/v1/pin?size=110&background=%230C797D&icon=fa-arrow-up&color=%23FFFFFF&voffset=0&hoffset=0&';
+          const DOWN_IMG = 'https://cdn.mapmarker.io/api/v1/pin?size=110&background=%23F44E3B&icon=fa-arrow-down&color=%23FFFFFF&voffset=0&hoffset=0&';
+          
+          let markerImageSrc;
+          if (mean(station.future) >= station.parkingBikeTotCnt) {
+            markerImageSrc = UP_IMG;
+          }
+          else {
+            markerImageSrc = DOWN_IMG;
+          }
+
+          const markerImage = new window.kakao.maps.MarkerImage(
+            markerImageSrc,
+            new kakao.maps.Size(40, 40),
+            {offeset: new kakao.maps.Point(0, 0)}
+          )
+          //console.log(markerImage)
           const marker = new kakao.maps.Marker({
-            //map: map,
             title: station.stationName,
-            position: markerPosition
+            position: markerPosition,
+            image: markerImage
           });
 
           return marker;
