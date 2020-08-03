@@ -25,7 +25,7 @@ function App() {
       <DetailModal show={true}/>
       <div className="row">
 
-        <div className="col-md-9 bg-success App_map">
+        <div className="col-md-9 App_map no-padding">
           <Map />
         </div>
 

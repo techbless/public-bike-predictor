@@ -5,6 +5,14 @@
 
 .App_map {
     height: calc(100vh - 56px);
+}
+
+.App {
     padding: 0;
     margin: 0;
+}
+
+.no-padding.col-md-9 {
+    padding-right: 0;
+    padding-left: 0;
 }
