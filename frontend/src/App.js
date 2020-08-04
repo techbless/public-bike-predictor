@@ -13,11 +13,11 @@ function mean(arr) {
 }
 
 function App() {
+  const [mapBound, setMapBound] = useState(null) 
+  const [map, setMap] = useState(null);
   const [mapClusterer, setMapClusterer] = useState(null);
   const [stations, setStations] = useState([]);
-
-  //const [searchWord, setSearchWord] = useState('');
-
+  
   async function search(e) {
     const searchWord = e.target.value;
     if(searchWord === '') {
@@ -36,39 +36,61 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    if(!mapClusterer) return;
+  
 
-    async function updateMap() {
-      mapClusterer.clear();
-      mapClusterer.addMarkers(
-        stations
-          .filter(station => station.show === true)
-          .map(station => station.marker)
-      );
+  useEffect(() => {
+    if(!map) return;
+    if(!mapBound) return;
+    if(!mapClusterer) return;
+    
+    function filterStationsOnMap(stations) {
+      const res = [];
+      let idxForRes = 0;
+      for(let i = 0; i < stations.length; i++) {
+        if(stations[i].show === true && mapBound.contain(stations[i].marker.getPosition())) {
+          res[idxForRes++] = stations[i].marker;
+        }
+      }
+      return res;
     }
 
-    updateMap();
-  }, [mapClusterer, stations]);
+    setTimeout(() => {
+      mapClusterer.clear();
+      mapClusterer.addMarkers(filterStationsOnMap(stations));
+    }, 0);
+
+  }, [map, mapBound, mapClusterer, stations]);
 
   useEffect(() => {
     kakao.maps.load(() => {
       let container = document.getElementById("Mymap");
       let options = {
-        center: new kakao.maps.LatLng(37.506502, 127.053617),
+        center: new kakao.maps.LatLng(37.5666805, 126.9784147),
         level: 5
       };
 
-      const map = new window.kakao.maps.Map(container, options);
+      const _map = new window.kakao.maps.Map(container, options);
+      _map.setMaxLevel(7);
       const clusterer = new window.kakao.maps.MarkerClusterer({
-        map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
+        map: _map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
+        gridSize: 150,
         averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정 
-        minLevel: 5 // 클러스터 할 최소 지도 레벨 
+        minLevel: 6 // 클러스터 할 최소 지도 레벨 
       });
-
+    
+      setMap(_map);
+      setMapBound(_map.getBounds())
       setMapClusterer(clusterer);
-    });
 
+      function updateBound() {
+        setTimeout(() => {
+          setMapBound(_map.getBounds())
+        }, 0)
+      }
+
+      kakao.maps.event.addListener(_map, 'idle', updateBound);
+    });
+    
     const APIURL = "http://49.50.166.60:5000/stations/available"
     fetch(APIURL)
     .then((res) => res.json())
@@ -92,7 +114,7 @@ function App() {
           new kakao.maps.Size(40, 40),
           {offeset: new kakao.maps.Point(0, 0)}
         )
-        //console.log(markerImage)
+        
         const marker = new kakao.maps.Marker({
           title: station.stationName,
           position: markerPosition,
