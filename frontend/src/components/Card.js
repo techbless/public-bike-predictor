@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Button } from 'react';
+import React from 'react';
 import '../styles/Card.css';
 
 function mean(arr) {
@@ -6,7 +6,6 @@ function mean(arr) {
 }
 
 function Card(props) {
-
     return (
         <div
             className={
