@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Button } from 'react';
-import './Card.css';
+import '../styles/Card.css';
 
 function mean(arr) {
     return arr.reduce((a, b) => a + b) / arr.length;

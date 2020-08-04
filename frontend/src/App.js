@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Card from './Card';
+import Card from './components/Card';
 import Map from './components/Map';
-import DetailModal from './DetailModal';
-import './App.css';
+import DetailModal from './components/DetailModal';
+import './styles/App.css';
 
 function App() {
 
