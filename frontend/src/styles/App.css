@@ -22,6 +22,7 @@
 
 .App_map {
     height: calc(100vh - 56px);
+    width: 100%;
 }
 
 .App {
@@ -32,4 +33,11 @@
 .no-padding.col-md-9 {
     padding-right: 0;
     padding-left: 0;
+}
+
+.Mymap {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
