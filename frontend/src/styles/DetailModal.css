@@ -1,0 +1,11 @@
+.canvas-container {
+  height: 40vh;
+  width:  100%;
+}
+
+@media screen and (max-width:992px){
+  .canvas-container {
+    height: 35vh;
+    width:  100%;
+  }
+}

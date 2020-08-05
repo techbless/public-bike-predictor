@@ -1,7 +1,6 @@
 /*global kakao*/
 
 import React, { useState, useEffect } from 'react';
-import { InputGroup, FormControl } from 'react-bootstrap';
 import Card from './components/Card';
 import DetailModal from './components/DetailModal';
 import Header from './components/Header';
@@ -17,6 +16,8 @@ function App() {
   const [map, setMap] = useState(null);
   const [mapClusterer, setMapClusterer] = useState(null);
   const [stations, setStations] = useState([]);
+  const [showDetail, setShowDetail] = useState(false);
+  const [selectedStation, setSelectedStation] = useState(null);
 
   useEffect(() => {
     kakao.maps.load(() => {
@@ -77,15 +78,23 @@ function App() {
           position: markerPosition,
           image: markerImage
         });
-  
         station.marker = marker;
         station.show = true;
+
+        kakao.maps.event.addListener(marker, 'click', function() {
+          setSelectedStation(station);
+        });
         return station;
       });
 
       setStations(markersInfo);
     });
   }, []);
+
+  useEffect(() => {
+    if(!selectedStation) return;
+    setShowDetail(true);
+  }, [selectedStation]);
 
   useEffect(() => {
     if(!map) return;
@@ -132,7 +141,7 @@ function App() {
     <div>
       <Header searchFn={search}/>
       <div className="App container-fluid">
-        <DetailModal show={false}/>
+        <DetailModal show={showDetail} station={selectedStation} close={() => {setShowDetail(false)}}/>
         <div className="row">
 
           <div className="col-lg-9 App_map no-padding ">
