@@ -135,11 +135,11 @@ function App() {
         <DetailModal show={false}/>
         <div className="row">
 
-          <div className="col-md-9 App_map no-padding ">
+          <div className="col-lg-9 App_map no-padding ">
             <MapContents id="Mymap"></MapContents>
           </div>
 
-          <div className="col-md-3 App_station_list d-none d-md-block">
+          <div className="col-lg-3 App_station_list d-none d-lg-block">
             <div className="container-fluid mt-3 ">
               {
                 stations
