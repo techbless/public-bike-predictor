@@ -1,0 +1,6 @@
+@media screen and (min-width:992px){
+  .search-input {
+    width: 25%;
+    padding: 0 24px 0 38px;
+  }  
+}

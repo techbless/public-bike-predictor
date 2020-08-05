@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { InputGroup, FormControl } from 'react-bootstrap';
 import Card from './components/Card';
 import DetailModal from './components/DetailModal';
+import Header from './components/Header';
 import './styles/App.css';
 import styled from "styled-components";
-
 
 function mean(arr) {
   return arr.reduce((a, b) => a + b) / arr.length;
@@ -17,49 +17,6 @@ function App() {
   const [map, setMap] = useState(null);
   const [mapClusterer, setMapClusterer] = useState(null);
   const [stations, setStations] = useState([]);
-  
-  async function search(e) {
-    const searchWord = e.target.value;
-    if(searchWord === '') {
-      setStations(stations.map(station => {
-        station.show = true
-        return station;
-      }));
-    } 
-    else {
-      setStations(
-        stations.map((station) => {
-          station.show = station.stationName.includes(searchWord) ? true : false;
-          return station;
-        })
-      );
-    }
-  }
-
-  
-
-  useEffect(() => {
-    if(!map) return;
-    if(!mapBound) return;
-    if(!mapClusterer) return;
-    
-    function filterStationsOnMap(stations) {
-      const res = [];
-      let idxForRes = 0;
-      for(let i = 0; i < stations.length; i++) {
-        if(stations[i].show === true && mapBound.contain(stations[i].marker.getPosition())) {
-          res[idxForRes++] = stations[i].marker;
-        }
-      }
-      return res;
-    }
-
-    setTimeout(() => {
-      mapClusterer.clear();
-      mapClusterer.addMarkers(filterStationsOnMap(stations));
-    }, 0);
-
-  }, [map, mapBound, mapClusterer, stations]);
 
   useEffect(() => {
     kakao.maps.load(() => {
@@ -130,43 +87,74 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    if(!map) return;
+    if(!mapBound) return;
+    if(!mapClusterer) return;
+    
+    function filterStationsOnMap(stations) {
+      const res = [];
+      let idxForRes = 0;
+      for(let i = 0; i < stations.length; i++) {
+        if(stations[i].show === true && mapBound.contain(stations[i].marker.getPosition())) {
+          res[idxForRes++] = stations[i].marker;
+        }
+      }
+      return res;
+    }
+
+    setTimeout(() => {
+      mapClusterer.clear();
+      mapClusterer.addMarkers(filterStationsOnMap(stations));
+    }, 0);
+
+  }, [map, mapBound, mapClusterer, stations]);
+
+  async function search(e) {
+    const searchWord = e.target.value;
+    if(searchWord === '') {
+      setStations(stations.map(station => {
+        station.show = true
+        return station;
+      }));
+    } 
+    else {
+      setStations(
+        stations.map((station) => {
+          station.show = station.stationName.includes(searchWord) ? true : false;
+          return station;
+        })
+      );
+    }
+  }
+
   return (
-    <div className="App container-fluid">
-      <DetailModal show={false}/>
-      <div className="row">
+    <div>
+      <Header searchFn={search}/>
+      <div className="App container-fluid">
+        <DetailModal show={false}/>
+        <div className="row">
 
-        <div className="col-md-9 App_map no-padding ">
-          <MapContents id="Mymap"></MapContents>
-        </div>
-
-        <div className="col-md-3 App_station_list d-none d-md-block">
-          <div className="container-fluid">
-            <InputGroup className="mt-3">
-              <InputGroup.Prepend>
-                <InputGroup.Text id="inputGroup-sizing-default">검색</InputGroup.Text>
-              </InputGroup.Prepend>
-              <FormControl
-                aria-label="Default"
-                aria-describedby="inputGroup-sizing-default"
-                onChange={search}
-              />
-            </InputGroup>
+          <div className="col-md-9 App_map no-padding ">
+            <MapContents id="Mymap"></MapContents>
           </div>
-          
 
-          <div className="container-fluid mt-3 ">
-            {
-              stations
-              .filter(station => station.show === true)
-              .map((station) => (
-                  <Card
-                    name = {station.stationName}
-                    id = {station.stationId}
-                    stock = {station.parkingBikeTotCnt}
-                    future = {station.future}
-                  />
-              ))
-            }
+          <div className="col-md-3 App_station_list d-none d-md-block">
+            <div className="container-fluid mt-3 ">
+              {
+                stations
+                .filter(station => station.show === true)
+                .map((station) => (
+                    <Card
+                      name = {station.stationName}
+                      id = {station.stationId}
+                      stock = {station.parkingBikeTotCnt}
+                      future = {station.future}
+                      onclick = {() => {alert("ddddd")}}
+                    />
+                ))
+              }
+            </div>
           </div>
         </div>
       </div>
