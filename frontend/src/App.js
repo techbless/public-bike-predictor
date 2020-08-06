@@ -6,13 +6,14 @@ import DetailModal from './components/DetailModal';
 import Header from './components/Header';
 import './styles/App.css';
 import styled from "styled-components";
+import { Clickable } from 'react-clickable';
 
 function mean(arr) {
   return arr.reduce((a, b) => a + b) / arr.length;
 }
 
 function App() {
-  const [mapBound, setMapBound] = useState(null) 
+  const [mapBound, setMapBound] = useState(null);
   const [map, setMap] = useState(null);
   const [mapClusterer, setMapClusterer] = useState(null);
   const [stations, setStations] = useState([]);
@@ -28,7 +29,7 @@ function App() {
       };
 
       const _map = new window.kakao.maps.Map(container, options);
-      _map.setMaxLevel(7);
+      _map.setMaxLevel(6);
       const clusterer = new window.kakao.maps.MarkerClusterer({
         map: _map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
         gridSize: 150,
@@ -49,7 +50,7 @@ function App() {
       kakao.maps.event.addListener(_map, 'idle', updateBound);
     });
     
-    const APIURL = "http://49.50.166.60:5000/stations/available"
+    const APIURL = "http://49.50.166.60:5000/stations/available";
     fetch(APIURL)
     .then((res) => res.json())
     .then(res => {
@@ -154,13 +155,21 @@ function App() {
                 stations
                 .filter(station => station.show === true)
                 .map((station) => (
-                    <Card
-                      name = {station.stationName}
-                      id = {station.stationId}
-                      stock = {station.parkingBikeTotCnt}
-                      future = {station.future}
-                      onclick = {() => {alert("ddddd")}}
-                    />
+                    <Clickable onClick={() => {
+                      map.setCenter(station.marker.getPosition());
+                      map.setLevel(3, {
+                        animate: {
+                            duration: 500
+                        }
+                      });
+                    }}>
+                      <Card
+                        name = {station.stationName}
+                        id = {station.stationId}
+                        stock = {station.parkingBikeTotCnt}
+                        future = {station.future}
+                      />
+                    </Clickable>
                 ))
               }
             </div>

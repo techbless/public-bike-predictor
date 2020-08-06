@@ -20,7 +20,6 @@ function DetailModal({show, close, station}){
     .then(history => {
       const historyData = history.map(t => {
         return {
-          //x: t.datetime.substring(5),
           x: t.datetime,
           y: t.parkingBikeTotCnt
         }
@@ -30,9 +29,6 @@ function DetailModal({show, close, station}){
       console.log("last", lastDate);
       let futureTime = [5, 10, 15, 20, 25, 30];
       futureTime = futureTime.map(f => {
-        // const d = new Date();
-        // d.setMinutes(lastDate.getMinutes() + f);
-        // return d;
         return new Date(lastDate.getTime() + f*60000);
       })
       console.log(futureTime);
@@ -87,10 +83,10 @@ function DetailModal({show, close, station}){
           display: true,
           labelString: 'value'
         },
-        ticks: {
-          min: 0, // minimum value
-          max: 50 // maximum value
-      }
+        // ticks: {
+        //   min: -2, // minimum value
+        //   max: 30 // maximum value
+        // }
       }]
     }
   }
@@ -108,11 +104,11 @@ function DetailModal({show, close, station}){
         }
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={close}>
+        {/* <Button variant="secondary" onClick={close}>
           Close
-        </Button>
-        <Button variant="primary" onClick={close}>
-          Save Changes
+        </Button> */}
+        <Button variant="danger" onClick={close}>
+          닫기
         </Button>
       </Modal.Footer>
     </Modal>
