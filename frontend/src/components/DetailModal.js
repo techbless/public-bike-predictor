@@ -5,11 +5,18 @@ import {Line} from 'react-chartjs-2';
 
 import '../styles/DetailModal.css';
 
+function max(previous, current) { 
+  return previous > current ? previous:current;
+}
+
+function min(previous, current) { 
+  return previous > current ? current:previous;
+}
+
 function DetailModal({show, close, station}){
 
   const [data, setData] = useState(null);
-
-
+  const [options, setOptions] = useState(null);
 
   useEffect(() => {
     if(!station) return;
@@ -61,35 +68,38 @@ function DetailModal({show, close, station}){
         ]
       }
 
+      const historyMax = historyData.map(h => h.y).reduce(max);
+      const futureMax = futureData.map(f => f.y).reduce(max);
+      const maxValue = futureMax > historyMax ? futureMax : historyMax;
+
+      const _options = {
+        maintainAspectRatio: false,
+        responsive: true,
+        scales: {
+          xAxes: [{
+            type: 'time',
+            display: true,
+            sclaeLabel: {
+              display: true,
+              labelString: 'Date'
+            }
+          }],
+          yAxes: [{
+            display: true,
+            ticks: {
+              min: 0,
+              max: maxValue + 5
+            }
+          }]
+        }
+      };
+
       setData(_data);
+      setOptions(_options);
     });
   }, [station]);
 
-  const options = {
-    maintainAspectRatio: false,
-    responsive: true,
-    scales: {
-      xAxes: [{
-        type: 'time',
-        display: true,
-        sclaeLabel: {
-          display: true,
-          labelString: 'Date'
-        }
-      }],
-      yAxes: [{
-        display: true,
-        scaleLabel: {
-          display: true,
-          labelString: 'value'
-        },
-        // ticks: {
-        //   min: -2, // minimum value
-        //   max: 30 // maximum value
-        // }
-      }]
-    }
-  }
+  
 
   return(
     <Modal size="lg" show={show} onHide={close} id="modal" centered>
