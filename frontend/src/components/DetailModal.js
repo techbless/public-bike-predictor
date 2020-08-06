@@ -9,10 +9,6 @@ function max(previous, current) {
   return previous > current ? previous:current;
 }
 
-function min(previous, current) { 
-  return previous > current ? current:previous;
-}
-
 function DetailModal({show, close, station}){
 
   const [data, setData] = useState(null);
@@ -49,21 +45,29 @@ function DetailModal({show, close, station}){
       
       console.log(futureData);
       const _data = {
+        fillOpacity: .3,
         datasets: [
           {
             label: '따릉이',
-            fill: false,
-            data: historyData
+            data: historyData,
+            fill: true,
+            borderColor: "#8fa194",
+            backgroundColor: "rgb(143, 161, 148, .2)",
+            pointBorderColor: "#999999",
+            pointBackgroundColor: "#8fa194",
+            pointHoverBackgroundColor: "#80b6f4",
+            pointHoverBorderColor: "#80b6f4"
           },
           {
             label: '예측',
-            fill: false,
-            borderColor: "#80b6f4",
-            pointBorderColor: "#80b6f4",
-            pointBackgroundColor: "#80b6f4",
-            pointHoverBackgroundColor: "#80b6f4",
-            pointHoverBorderColor: "#80b6f4",
-            data: futureData
+            data: futureData,
+            fill: true,
+            borderColor: "#3ccfb6",
+            backgroundColor: "rgb(60, 207, 182, .2)",
+            pointBorderColor: "#3ccfb6",
+            pointBackgroundColor: "#3ccfb6",
+            pointHoverBackgroundColor: "#3ccfb6",
+            pointHoverBorderColor: "#3ccfb6",
           }
         ]
       }
