@@ -9,7 +9,7 @@ function Header(props) {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="flex-grow-0 search-input">
           <hr />
-          <InputGroup className="w-100 mb-2">
+          <InputGroup className="w-100">
             <InputGroup.Prepend>
               <InputGroup.Text id="inputGroup-sizing-default">검색</InputGroup.Text>
             </InputGroup.Prepend>
