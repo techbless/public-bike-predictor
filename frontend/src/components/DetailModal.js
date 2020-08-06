@@ -45,7 +45,6 @@ function DetailModal({show, close, station}){
       
       console.log(futureData);
       const _data = {
-        fillOpacity: .3,
         datasets: [
           {
             label: '따릉이',
