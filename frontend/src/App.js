@@ -142,7 +142,14 @@ function App() {
     <div>
       <Header searchFn={search}/>
       <div className="App container-fluid">
-        <DetailModal show={showDetail} station={selectedStation} close={() => {setShowDetail(false)}}/>
+        <DetailModal 
+          show={showDetail} 
+          station={selectedStation} 
+          close={() => {
+            setShowDetail(false);
+            setSelectedStation(null);
+          }
+        }/>
         <div className="row">
 
           <div className="col-lg-9 App_map no-padding ">
