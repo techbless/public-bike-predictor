@@ -145,7 +145,6 @@ function App() {
   return (
     <div>
       <Header searchFn={search}/>
-      { loading && <img className="loading" src={loadingImage} alt="Loading..." /> }
       <div className="App container-fluid">
         <DetailModal 
           show={showDetail} 
@@ -158,6 +157,7 @@ function App() {
         <div className="row">
 
           <div className="col-lg-9 App_map no-padding ">
+            { loading && <img className="loading" src={loadingImage} alt="Loading..." /> }
             <MapContents id="Mymap"></MapContents>
           </div>
 
