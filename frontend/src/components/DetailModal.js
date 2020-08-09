@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import {Line} from 'react-chartjs-2';
 
+import moment from 'moment';
+
 import '../styles/DetailModal.css';
 
 function max(previous, current) { 
@@ -23,16 +25,16 @@ function DetailModal({show, close, station}){
     .then(history => {
       const historyData = history.map(t => {
         return {
-          x: t.datetime,
+          x: moment(t.datetime, "YYYY-MM-DD hh:mm"),
           y: t.parkingBikeTotCnt
         }
       });
 
-      const lastDate = new Date(history[history.length - 1].datetime);
+      const lastDate = history[history.length - 1].datetime;
       console.log("last", lastDate);
       let futureTime = [5, 10, 15, 20, 25, 30];
       futureTime = futureTime.map(f => {
-        return new Date(lastDate.getTime() + f*60000);
+        return moment(lastDate, "YYYY-MM-DD hh:mm").add(f, 'minutes');
       })
       console.log(futureTime);
       const futureData = []
