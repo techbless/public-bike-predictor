@@ -12,4 +12,12 @@ Directory-specific usage description
 | predictor         | 재고 예측 모델 및 백엔드 서버 |
 | frontend          | 프론트엔드 서버          |
 
+## 실행 방법
 
+### 데이터 수집기
+```
+cd ./dataset-collector
+npm install
+npm build
+npm start
+```
