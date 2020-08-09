@@ -8,6 +8,8 @@ import './styles/App.css';
 import styled from "styled-components";
 import { Clickable } from 'react-clickable';
 
+import loadingImage from './assets/loading.gif';
+
 function mean(arr) {
   return arr.reduce((a, b) => a + b) / arr.length;
 }
@@ -19,6 +21,7 @@ function App() {
   const [stations, setStations] = useState([]);
   const [showDetail, setShowDetail] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     kakao.maps.load(() => {
@@ -88,6 +91,7 @@ function App() {
         return station;
       });
 
+      setLoading(false);
       setStations(markersInfo);
     });
   }, []);
@@ -141,6 +145,7 @@ function App() {
   return (
     <div>
       <Header searchFn={search}/>
+      { loading && <img className="loading" src={loadingImage} alt="Loading..." /> }
       <div className="App container-fluid">
         <DetailModal 
           show={showDetail} 
