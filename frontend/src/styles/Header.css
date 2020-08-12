@@ -4,3 +4,11 @@
     padding: 0 24px 0 46px;
   }  
 }
+
+.Header_logo {
+  width: auto;
+  height: 28px;
+  margin-top: -5%;
+  margin-right: 10px;
+  border-radius: 5px;
+}

@@ -5,7 +5,10 @@ import '../styles/Header.css';
 function Header(props) {
     return (
       <Navbar bg="dark" expand="lg" variant = "dark" className="justify-content-between">
-        <Navbar.Brand href="#home" >따르릉</Navbar.Brand>
+        <Navbar.Brand href="#home" className="Header_brand" >
+          <img src="/favicon.ico" className="Header_logo" />
+          따르릉
+          </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="flex-grow-0 search-input">
           <hr />
