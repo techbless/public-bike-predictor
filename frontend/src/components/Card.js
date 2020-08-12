@@ -10,8 +10,8 @@ function Card(props) {
         <div
             className={
                 mean(props.future) >= props.stock ? 
-                "up Card_card my-2 shadow-sm rounded ml-2" : 
-                "down Card_card my-2 shadow-sm rounded ml-2"
+                "up Card_card my-2 shadow-sm rounded" : 
+                "down Card_card my-2 shadow-sm rounded"
             }
         >
             <h6 className="text-center pt-2">{props.name}</h6>
