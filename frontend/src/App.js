@@ -143,9 +143,9 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="App">
       <Header searchFn={search}/>
-      <div className="App container-fluid">
+      <div className="container-fluid">
         <DetailModal 
           show={showDetail} 
           station={selectedStation} 
