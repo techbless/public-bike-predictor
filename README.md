@@ -1,9 +1,9 @@
 # public-bike-predictor
 
 **서울시 공공자전거 따릉이의 미래 재고수를 예측합니다.**   
-**Forecast stock of public bicycles in Seoul.**
 
-![Example](/images/frontend_ex.png)
+`아래를 클릭하여 PC환경의 데모 영상을 확인하실 수 있습니다.`
+[![Watch the video](/images/youtube_img.png)](https://youtu.be/9v52zE9WJSM)
 
 `장안동 사거리` 대여소의 재고 예측 결과 예시입니다.   
 각각의 색이 다른 선은 5분~30분후의 예측 결과를 나타내며, 각각 검정과 파랑 라인은 수집된 실제 재고수를 나타냅니다.
