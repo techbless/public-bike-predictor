@@ -93,3 +93,11 @@ npm install
 npm build
 serve ./build -p 80
 ```
+
+#### 설정
+* 아래의 설정 파일에 백엔드 주소를 설정합니다.   
+`/frontend/src/config/config.json`    
+
+* 카카오맵 API 키를 발급받은 후, 아래의 파일 44번째 라인의 `KAKAO_MAP_API_KEY`를 발급받은 키로 대치합니다.   
+카카오맵 API 발급후, 카카오맵 API 콘솔에서 프론트 앤드의 주소를 등록해주어야 합니다.   
+`/frontend/public/index.html`
