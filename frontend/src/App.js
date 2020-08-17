@@ -8,6 +8,7 @@ import './styles/App.css';
 import styled from "styled-components";
 import { Clickable } from 'react-clickable';
 
+import config from './config/config.json';
 import loadingImage from './assets/loading.gif';
 
 function mean(arr) {
@@ -53,7 +54,7 @@ function App() {
       kakao.maps.event.addListener(_map, 'idle', updateBound);
     });
     
-    const APIURL = "http://49.50.166.60:5000/stations/available";
+    const APIURL = `http://${config.backend_addr}/stations/available`;
     fetch(APIURL)
     .then((res) => res.json())
     .then(res => {

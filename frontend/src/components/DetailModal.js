@@ -5,6 +5,7 @@ import {Line} from 'react-chartjs-2';
 
 import moment from 'moment';
 
+import config from '../config/config.json';
 import '../styles/DetailModal.css';
 
 function max(previous, current) { 
@@ -19,7 +20,7 @@ function DetailModal({show, close, station}){
   useEffect(() => {
     if(!station) return;
 
-    const APIURL = `http://49.50.166.60:5000/station/${station.stationId}/history`;
+    const APIURL = `http://${config.backend_addr}/station/${station.stationId}/history`;
     fetch(APIURL)
     .then((res) => res.json())
     .then(history => {
