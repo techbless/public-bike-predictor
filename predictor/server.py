@@ -187,7 +187,7 @@ sched.add_job(load_models, 'cron', hour='3') # every at 03:00 AM
 sched.start()
 
 
-@cache(seconds=240*60)
+@cache(seconds=2*60)
 def get_stations():
     availableStations = get_available_stations()
     
